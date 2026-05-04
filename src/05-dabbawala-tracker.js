@@ -48,6 +48,75 @@
  *   ram.getStats();
  *   // => { name: "Ram", area: "Dadar", total: 2, completed: 1, pending: 1, successRate: "50.00%" }
  */
+
 export function createDabbawala(name, area) {
+  let id = 0;
+  let deliveryArr = [];
+  return {
+    addDelivery(from, to) {
+      if (!from || from.trim() === "" || !to || to.trim() === "") return -1;
+      deliveryArr.push({ id: id + 1, from, to, status: "pending" });
+      return ++id;
+    },
+    completeDelivery(id) {
+      const findByPendingDeliveryId = deliveryArr.find(
+        (val) => val.id === id && val.status === "pending",
+      );
+      // const findByCompletedDeliveryId=deliveryArr.find((val)=>val.id===id && val.status==="completed")
+      if (findByPendingDeliveryId) {
+        deliveryArr = deliveryArr.map((val) => {
+          return {
+            ...val,
+            status:
+              val.id === findByPendingDeliveryId.id ? "completed" : val.status,
+          };
+        });
+        return true;
+      } else {
+        return false;
+      }
+    },
+    getActiveDeliveries() {
+      const activeDeliveries = [...deliveryArr];
+      return activeDeliveries.filter((val) => val.status === "pending");
+    },
+    getStats() {
+      const orderNumberByStatus = deliveryArr.reduce(
+        (acc, curr) => {
+          if (curr.status === "pending") {
+            acc[curr.status] += 1;
+          }
+          if (curr.status === "completed") {
+            acc[curr.status] += 1;
+          }
+          return acc;
+        },
+        { pending: 0, completed: 0 },
+      );
+      const total = orderNumberByStatus.pending + orderNumberByStatus.completed;
+      const successRate =
+        total === 0
+          ? "0.00%"
+          : String(((orderNumberByStatus.completed / total)*100).toFixed(2)) + "%";
+      return {
+        name,
+        area,
+        total,
+        pending: orderNumberByStatus.pending,
+        completed: orderNumberByStatus.completed,
+        successRate,
+      };
+    },
+    reset() {
+      id=0
+      deliveryArr=new Array(0)
+      return true
+    }
+  };
   // Your code here
 }
+const ram = createDabbawala("Ram", "Dadar");
+console.log(ram.addDelivery("Andheri", "Churchgate")); // => 1
+console.log(ram.addDelivery("Bandra", "CST"));
+console.log(ram.completeDelivery(1))
+console.log(ram.getStats())

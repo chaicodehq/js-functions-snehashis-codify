@@ -46,17 +46,54 @@
  *   // => "Amit is coming!"
  */
 export function processGuests(guests, filterFn) {
+  console.log(typeof filterFn);
+  if (!Array.isArray(guests) || typeof filterFn !== "function") return [];
+  const filteredData = guests.filter(filterFn);
+  return filteredData;
   // Your code here
 }
 
 export function notifyGuests(guests, notifyCallback) {
+  if (!Array.isArray(guests) || typeof notifyCallback !== "function") return [];
+  return guests.map(notifyCallback);
   // Your code here
 }
 
 export function handleRSVP(guest, onAccept, onDecline) {
+  if (
+    !guest ||
+    guest === undefined ||
+    typeof onAccept !== "function" ||
+    typeof onDecline !== "function"
+  )
+    return null;
+  switch (guest.rsvp) {
+    case "yes":
+      return onAccept(guest);
+    case "no":
+      return onDecline(guest);
+
+    default:
+      return null;
+  }
   // Your code here
 }
 
 export function transformGuestList(guests, ...transformFns) {
+  if(!Array.isArray(guests)) return []
+  let newArr=[...guests]
+  for (const element of transformFns) {
+    newArr=element(newArr)
+  }
+  return newArr
   // Your code here
 }
+console.log(
+  processGuests(
+    [
+      { name: "Rahul", side: "bride" },
+      { name: "Priya", side: "groom" },
+    ],
+    (guest) => guest.side === "bride",
+  ),
+);

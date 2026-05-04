@@ -54,9 +54,24 @@
  */
 export function repeatChar(char, n) {
   // Your code here
+  if (n > 0) {
+    return char + repeatChar(char, n - 1);
+  }
+  return "";
 }
-
+let sum = 0;
 export function sumNestedArray(arr) {
+  if (arr.length <= 0) return 0;
+
+  for (const element of arr) {
+    if (typeof element === "number") {
+      sum += element;
+    }
+    if (Array.isArray(element)) {
+      sumNestedArray(element);
+    }
+  }
+  return sum;
   // Your code here
 }
 
@@ -71,3 +86,5 @@ export function isPalindrome(str) {
 export function generatePattern(n) {
   // Your code here
 }
+console.log(repeatChar("*", 4));
+console.log(sumNestedArray([1, [2, [3]]]));
