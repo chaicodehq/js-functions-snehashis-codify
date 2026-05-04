@@ -45,13 +45,71 @@
  *   pricer("gold", true)  // => 200 * 1.5 * 1.3 = 390
  */
 export function createDialogueWriter(genre) {
+  if (!["action", "romance", "comedy", "drama"].includes(genre)) return null;
+  return function (hero, villain) {
+    if (!hero || !villain || hero.trim() === "" || villain.trim() === "")
+      return "...";
+    let baseStr = null;
+    switch (genre) {
+      case "action":
+        baseStr = `${hero} says: 'Tujhe toh main dekh lunga, ${villain}!'`;
+        break;
+      case "romance":
+        baseStr = `${hero} whispers: '${villain}, tum mere liye sab kuch ho'`;
+        break;
+      case "comedy":
+        baseStr = `${hero} laughs: '${villain} bhai, kya kar rahe ho yaar!'`;
+        break;
+      case "drama":
+        baseStr = `${hero} cries: '${villain}, tune mera sab kuch cheen liya!'`;
+        break;
+      default:
+        baseStr = baseStr;
+        break;
+    }
+    return baseStr;
+  };
   // Your code here
 }
 
 export function createTicketPricer(basePrice) {
+  if (basePrice <= 0) return null;
+  return function (seatType, isWeekend = false) {
+    if (basePrice <= 0) return null;
+    let price = isWeekend ? basePrice * 1.3 : basePrice;
+    switch (seatType) {
+      case "silver":
+        price = price;
+        break;
+      case "gold":
+        price *= 1.5;
+        break;
+      case "platinum":
+        price *= 2;
+        break;
+
+      default:
+        price = null;
+        break;
+    }
+    return price ? Math.round(price) : null;
+  };
   // Your code here
 }
 
 export function createRatingCalculator(weights) {
+  if (typeof weights !== "object" || !weights) return null;
+  return function (scores) {
+    if (typeof weights !== "object") return null;
+    const weightedAvg = Object.keys(scores).reduce((acc, curr) => {
+      acc += scores[curr] * weights[curr];
+      return acc;
+    }, 0);
+    return Math.round(weightedAvg * 10) / 10;
+  };
   // Your code here
 }
+const actionWriter = createDialogueWriter("horror");
+console.log(createDialogueWriter("horror"));
+const pricer = createTicketPricer(200);
+console.log(createRatingCalculator(null)); // => 200 * 1.5 * 1.3 = 390
